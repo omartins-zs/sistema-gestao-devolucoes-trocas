@@ -25,7 +25,10 @@ class ReembolsoController extends Controller
     {
         try {
             $filtros = $request->only(['status', 'cliente_id']);
-            $filtros['status'] = $filtros['status'] ?? 'pendente';
+            // Remove status se for vazio (todos os status)
+            if (empty($filtros['status'])) {
+                unset($filtros['status']);
+            }
             $filtros['per_page'] = 15;
 
             $reembolsos = $this->reembolsoService->listarReembolsos($filtros);

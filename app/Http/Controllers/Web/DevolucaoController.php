@@ -24,7 +24,10 @@ class DevolucaoController extends Controller
     {
         try {
             $filtros = $request->only(['status', 'cliente_id', 'produto_id']);
-            $filtros['status'] = $filtros['status'] ?? 'pendente';
+            // Remove status se for vazio (todos os status)
+            if (empty($filtros['status'])) {
+                unset($filtros['status']);
+            }
             $filtros['per_page'] = 15;
 
             $devolucoes = $this->devolucaoService->listarDevolucoes($filtros);

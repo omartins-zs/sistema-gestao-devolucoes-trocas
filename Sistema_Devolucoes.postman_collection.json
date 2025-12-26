@@ -56,7 +56,7 @@
 								}
 							]
 						},
-						"description": "Lista todas as devoluções com filtros opcionais. Retorna paginação.\n\n**Query Parameters:**\n- `status` (opcional): pendente, aprovada, recusada, concluida\n- `cliente_id` (opcional): ID do cliente\n- `produto_id` (opcional): ID do produto\n- `per_page` (opcional): Itens por página (padrão: 15)\n\n**Exemplo de Resposta:**\n```json\n{\n  \"status\": \"success\",\n  \"data\": {\n    \"current_page\": 1,\n    \"data\": [...],\n    \"total\": 10\n  }\n}\n```"
+						"description": "Lista todas as devoluções com filtros opcionais. Retorna paginação.\n\n**Query Parameters:**\n- `status` (opcional): pendente, aprovada, recusada, concluida. Se vazio ou não fornecido, retorna todos os status\n- `cliente_id` (opcional): ID do cliente\n- `produto_id` (opcional): ID do produto\n- `per_page` (opcional): Itens por página (padrão: 15)\n\n**Exemplo de Resposta:**\n```json\n{\n  \"status\": \"success\",\n  \"data\": {\n    \"current_page\": 1,\n    \"data\": [...],\n    \"total\": 10\n  }\n}\n```"
 					},
 					"response": []
 				},
