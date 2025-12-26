@@ -308,9 +308,66 @@
 						"description": "Atualiza o status da devolução para 'concluida'. Ajusta o estoque automaticamente e dispara e-mail de notificação.\n\n**Ações Automáticas:**\n- Se for **devolução**: Cria reembolso automaticamente (status: pendente)\n- Se for **troca**: Cria pedido de troca automaticamente (novo código de pedido)\n- Incrementa estoque do produto devolvido\n- Se for troca: Decrementa estoque do produto de troca\n- E-mail enviado ao cliente\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Body (JSON):**\n- `status` (obrigatório): \"concluida\"\n- `observacoes` (opcional): Observações finais (máximo: 1000 caracteres)\n\n**Validações:**\n- Status anterior deve ser 'aprovada'\n- Se for troca: Estoque suficiente do produto de troca\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Status da devolução atualizado com sucesso\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"concluida\",\n    \"reembolso\": {\n      \"id\": 1,\n      \"valor\": 6599.80,\n      \"status\": \"pendente\"\n    },\n    \"pedidoTroca\": {...},\n    ...\n  }\n}\n```"
 					},
 					"response": []
+				},
+				{
+					"name": "Remover Devolução",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da devolução"
+								}
+							]
+						},
+						"description": "Remove uma devolução do sistema. Use com cuidado, pois esta ação é irreversível.\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Validações:**\n- Devolução deve existir\n- Verifique se não há reembolsos ou pedidos de troca associados\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Devolução removida com sucesso\"\n}\n```"
+					},
+					"response": []
 				}
 			],
 			"description": "Endpoints para gerenciamento de devoluções e trocas"
+		},
+		{
+			"name": "Interface Web (Notas)",
+			"item": [
+				{
+					"name": "⚠️ Funcionalidades Apenas na Interface Web",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "**Nota Importante:** As seguintes funcionalidades estão disponíveis apenas na interface web administrativa (não via API REST):\n\n### Reembolsos\nOs reembolsos são criados automaticamente quando uma devolução do tipo `devolucao` é concluída. A gestão de reembolsos está disponível apenas na interface web:\n\n- **Listar Reembolsos**: `GET /reembolsos`\n- **Visualizar Reembolso**: `GET /reembolsos/{id}`\n- **Autorizar Reembolso**: `POST /reembolsos/{id}/autorizar`\n  - Body: `{ \"autorizado\": true, \"observacoes\": \"...\" }`\n- **Processar Reembolso**: `POST /reembolsos/{id}/processar`\n  - Body: `{ \"metodo\": \"credito_original\", \"observacoes\": \"...\" }`\n\n**Status de Reembolso:**\n- `pendente`: Aguardando autorização\n- `processado`: Reembolso processado e liberado\n\n**Métodos de Reembolso:**\n- `credito_original`: Crédito no método de pagamento original\n- `credito_plataforma`: Crédito na plataforma\n- `transferencia`: Transferência bancária\n\n### Gerar Código de Rastreamento\n- **Gerar Código**: `POST /devolucoes/{id}/gerar-codigo-rastreamento`\n  - Gera um código único no formato: `BR{ID}{RANDOM}BR`\n  - Exemplo: `BR0001A5B6C7D8BR`\n\n**Acesso à Interface Web:**\n1. Inicie o servidor: `php artisan serve`\n2. Acesse: `http://localhost:8000`\n3. Você será redirecionado para a listagem de devoluções"
+					},
+					"response": []
+				}
+			],
+			"description": "Notas sobre funcionalidades disponíveis apenas na interface web"
 		}
 	],
 	"variable": [
