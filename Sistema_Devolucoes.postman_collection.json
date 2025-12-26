@@ -341,6 +341,40 @@
 						"description": "Remove uma devolução do sistema. Use com cuidado, pois esta ação é irreversível.\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Validações:**\n- Devolução deve existir\n- Verifique se não há reembolsos ou pedidos de troca associados\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Devolução removida com sucesso\"\n}\n```"
 					},
 					"response": []
+				},
+				{
+					"name": "Gerar Código de Rastreamento",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1/gerar-codigo-rastreamento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1",
+								"gerar-codigo-rastreamento"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da devolução"
+								}
+							]
+						},
+						"description": "Gera um código de rastreamento único para uma devolução. O código é gerado no formato: BR{ID}{RANDOM}BR\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Validações:**\n- Devolução deve existir\n- Devolução não deve ter código de rastreamento já gerado\n\n**Formato do Código:**\n- Exemplo: `BR0001A5B6C7D8BR`\n- Formato: `BR` + ID (4 dígitos com zeros à esquerda) + 8 caracteres aleatórios + `BR`\n\n**Ações Automáticas:**\n- Código de rastreamento salvo na devolução\n- Data de envio atualizada\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Código de rastreamento gerado com sucesso\",\n  \"data\": {\n    \"codigo_rastreamento\": \"BR0001A5B6C7D8BR\",\n    \"devolucao_id\": 1\n  }\n}\n```"
+					},
+					"response": []
 				}
 			],
 			"description": "Endpoints para gerenciamento de devoluções e trocas"

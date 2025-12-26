@@ -136,4 +136,35 @@ class DevolucaoController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * Gera código de rastreamento para uma devolução
+     */
+    public function gerarCodigoRastreamento(string $id): JsonResponse
+    {
+        try {
+            $codigo = $this->devolucaoService->gerarCodigoRastreamento((int) $id);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Código de rastreamento gerado com sucesso',
+                'data' => [
+                    'codigo_rastreamento' => $codigo,
+                    'devolucao_id' => (int) $id,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao gerar código de rastreamento', [
+                'devolucao_id' => $id,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Erro ao gerar código de rastreamento',
+                'error' => $e->getMessage(),
+            ], 400);
+        }
+    }
 }

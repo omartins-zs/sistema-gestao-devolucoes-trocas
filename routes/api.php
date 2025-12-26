@@ -11,6 +11,7 @@ Route::apiResource('devolucoes', DevolucaoController::class)->names([
     'update' => 'api.devolucoes.update',
     'destroy' => 'api.devolucoes.destroy',
 ]);
+Route::post('devolucoes/{id}/gerar-codigo-rastreamento', [DevolucaoController::class, 'gerarCodigoRastreamento'])->name('api.devolucoes.gerar-codigo');
 
 Route::prefix('reembolsos')->name('api.reembolsos.')->group(function () {
     Route::get('/', [ReembolsoController::class, 'index'])->name('index');
