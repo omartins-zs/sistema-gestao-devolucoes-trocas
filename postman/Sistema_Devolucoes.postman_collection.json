@@ -1,0 +1,324 @@
+{
+	"info": {
+		"_postman_id": "sistema-devolucoes-api",
+		"name": "Sistema de Gestão de Devoluções - API",
+		"description": "Collection completa da API do Sistema de Gestão de Devoluções e Trocas em E-commerce\n\n**Variáveis de Ambiente:**\n- `base_url`: URL base da API (ex: http://localhost:8000)\n\n**Importar no Postman:**\n1. Abra o Postman\n2. Clique em Import\n3. Selecione este arquivo\n4. Configure a variável `base_url` no ambiente",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Devoluções",
+			"item": [
+				{
+					"name": "Listar Devoluções",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes?status=pendente&cliente_id=&produto_id=&per_page=15",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pendente",
+									"description": "Filtrar por status: pendente, aprovada, recusada, concluida",
+									"disabled": false
+								},
+								{
+									"key": "cliente_id",
+									"value": "",
+									"description": "Filtrar por ID do cliente",
+									"disabled": true
+								},
+								{
+									"key": "produto_id",
+									"value": "",
+									"description": "Filtrar por ID do produto",
+									"disabled": true
+								},
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "Itens por página (padrão: 15)",
+									"disabled": false
+								}
+							]
+						},
+						"description": "Lista todas as devoluções com filtros opcionais. Retorna paginação.\n\n**Query Parameters:**\n- `status` (opcional): pendente, aprovada, recusada, concluida\n- `cliente_id` (opcional): ID do cliente\n- `produto_id` (opcional): ID do produto\n- `per_page` (opcional): Itens por página (padrão: 15)\n\n**Exemplo de Resposta:**\n```json\n{\n  \"status\": \"success\",\n  \"data\": {\n    \"current_page\": 1,\n    \"data\": [...],\n    \"total\": 10\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Devolução",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pedido_item_id\": 1,\n    \"quantidade\": 2,\n    \"motivo\": \"Produto com defeito na tela. A tela apresenta riscos e não liga corretamente após alguns minutos de uso.\",\n    \"tipo\": \"devolucao\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes"
+							]
+						},
+						"description": "Cria uma nova solicitação de devolução. O status inicial será 'pendente'. Quando concluída, cria reembolso automaticamente.\n\n**Body (JSON):**\n- `pedido_item_id` (obrigatório): ID do item do pedido\n- `quantidade` (obrigatório): Quantidade a devolver (mínimo: 1)\n- `motivo` (obrigatório): Motivo da devolução (mínimo: 10 caracteres, máximo: 1000)\n- `tipo` (opcional): \"devolucao\" (padrão) ou \"troca\"\n\n**Exemplo de Resposta (201):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Devolução criada com sucesso\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"pendente\",\n    \"tipo\": \"devolucao\",\n    \"cliente_id\": 1,\n    \"produto_id\": 1,\n    \"quantidade\": 2,\n    \"motivo\": \"Produto com defeito na tela...\",\n    \"data_solicitacao\": \"2024-12-26T15:00:00.000000Z\"\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Criar Troca",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pedido_item_id\": 1,\n    \"quantidade\": 1,\n    \"motivo\": \"Produto não corresponde à descrição. Quero trocar por outro modelo mais adequado às minhas necessidades.\",\n    \"tipo\": \"troca\",\n    \"produto_troca_id\": 2,\n    \"motivo_troca\": \"Foi enviado o pedido errado. Era a cor preta e veio azul\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes"
+							]
+						},
+						"description": "Cria uma nova solicitação de troca. O status inicial será 'pendente'. Quando concluída, cria pedido de troca automaticamente.\n\n**Body (JSON):**\n- `pedido_item_id` (obrigatório): ID do item do pedido\n- `quantidade` (obrigatório): Quantidade a trocar (mínimo: 1)\n- `motivo` (obrigatório): Motivo da devolução/troca (mínimo: 10 caracteres, máximo: 1000)\n- `tipo` (obrigatório): \"troca\"\n- `produto_troca_id` (obrigatório quando tipo=troca): ID do produto desejado em troca\n- `motivo_troca` (obrigatório quando tipo=troca): Motivo específico da troca (mínimo: 10 caracteres, máximo: 1000)\n\n**Validações:**\n- `produto_troca_id` deve ser diferente de `produto_id` do item do pedido\n- `produto_troca_id` deve existir na tabela produtos\n\n**Exemplos de motivo_troca:**\n- \"Foi enviado o pedido errado. Era a cor preta e veio azul\"\n- \"Pedi uma bola de basquete e veio uma de futsal\"\n- \"Tamanho incorreto. Preciso de um tamanho maior\"\n\n**Exemplo de Resposta (201):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Devolução criada com sucesso\",\n  \"data\": {\n    \"id\": 2,\n    \"status\": \"pendente\",\n    \"tipo\": \"troca\",\n    \"produto_troca_id\": 2,\n    \"motivo_troca\": \"Foi enviado o pedido errado...\",\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Visualizar Devolução",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1",
+									"description": "ID da devolução"
+								}
+							]
+						},
+						"description": "Obtém os detalhes completos de uma devolução específica, incluindo relacionamentos (cliente, produto, histórico, pedido de troca, reembolso, código de rastreamento).\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Devolução encontrada\",\n  \"data\": {\n    \"id\": 1,\n    \"tipo\": \"devolucao\",\n    \"status\": \"concluida\",\n    \"codigo_rastreamento\": \"BR0001A5B6C7D8BR\",\n    \"cliente\": {...},\n    \"produto\": {...},\n    \"historico\": [...],\n    \"reembolso\": {...},\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Status - Aprovar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"aprovada\",\n    \"observacoes\": \"Devolução aprovada. Cliente deve enviar o produto para o endereço: Rua Exemplo, 123 - São Paulo/SP. CEP: 01234-567. Prazo de 7 dias úteis.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Atualiza o status da devolução para 'aprovada'. Dispara e-mail de notificação ao cliente.\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Body (JSON):**\n- `status` (obrigatório): \"aprovada\" ou \"recusada\"\n- `observacoes` (opcional): Observações sobre a decisão (máximo: 1000 caracteres)\n\n**Validações:**\n- Status deve ser 'pendente' para poder aprovar\n- Transições válidas: pendente → aprovada/recusada\n\n**Ações Automáticas:**\n- E-mail enviado ao cliente informando aprovação\n- Histórico registrado\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Status da devolução atualizado com sucesso\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"aprovada\",\n    \"data_status\": \"2024-12-26T16:00:00.000000Z\",\n    \"observacoes\": \"Devolução aprovada...\",\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Status - Recusar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"recusada\",\n    \"observacoes\": \"Devolução recusada. O produto não se enquadra na política de devolução. Prazo de 7 dias ultrapassado. Produto já foi utilizado além do período de teste.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Atualiza o status da devolução para 'recusada'. Dispara e-mail de notificação ao cliente.\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Body (JSON):**\n- `status` (obrigatório): \"recusada\"\n- `observacoes` (opcional): Motivo da recusa (máximo: 1000 caracteres)\n\n**Ações Automáticas:**\n- E-mail enviado ao cliente informando recusa\n- Histórico registrado\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Status da devolução atualizado com sucesso\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"recusada\",\n    \"observacoes\": \"Devolução recusada...\",\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar Status - Concluir",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"concluida\",\n    \"observacoes\": \"Devolução concluída. Produto recebido e em bom estado. Estoque ajustado automaticamente. Reembolso criado automaticamente (se devolução) ou pedido de troca gerado (se troca).\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/devolucoes/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"devolucoes",
+								"1"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Atualiza o status da devolução para 'concluida'. Ajusta o estoque automaticamente e dispara e-mail de notificação.\n\n**Ações Automáticas:**\n- Se for **devolução**: Cria reembolso automaticamente (status: pendente)\n- Se for **troca**: Cria pedido de troca automaticamente (novo código de pedido)\n- Incrementa estoque do produto devolvido\n- Se for troca: Decrementa estoque do produto de troca\n- E-mail enviado ao cliente\n\n**Path Parameters:**\n- `id` (obrigatório): ID da devolução\n\n**Body (JSON):**\n- `status` (obrigatório): \"concluida\"\n- `observacoes` (opcional): Observações finais (máximo: 1000 caracteres)\n\n**Validações:**\n- Status anterior deve ser 'aprovada'\n- Se for troca: Estoque suficiente do produto de troca\n\n**Exemplo de Resposta (200):**\n```json\n{\n  \"status\": \"success\",\n  \"message\": \"Status da devolução atualizado com sucesso\",\n  \"data\": {\n    \"id\": 1,\n    \"status\": \"concluida\",\n    \"reembolso\": {\n      \"id\": 1,\n      \"valor\": 6599.80,\n      \"status\": \"pendente\"\n    },\n    \"pedidoTroca\": {...},\n    ...\n  }\n}\n```"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para gerenciamento de devoluções e trocas"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string",
+			"description": "URL base da API"
+		}
+	]
+}
