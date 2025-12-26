@@ -33,7 +33,7 @@
 								{
 									"key": "status",
 									"value": "pendente",
-									"description": "Filtrar por status: pendente, aprovada, recusada, concluida",
+									"description": "Filtrar por status: pendente, aprovada, recusada, concluida. Deixe vazio para todos os status",
 									"disabled": false
 								},
 								{
@@ -406,7 +406,7 @@
 								{
 									"key": "status",
 									"value": "pendente",
-									"description": "Filtrar por status: pendente, processado",
+									"description": "Filtrar por status: pendente, processado. Deixe vazio para todos os status",
 									"disabled": false
 								},
 								{
