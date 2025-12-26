@@ -12,10 +12,10 @@
             </svg>
             Voltar para lista
         </a>
-        <div class="flex items-center gap-4">
-            <h1 class="text-4xl font-bold">Reembolso #{{ $reembolso->id }}</h1>
-            <div class="badge badge-lg {{ $reembolso->status === 'processado' ? 'badge-success' : ($reembolso->status === 'cancelado' ? 'badge-error' : 'badge-warning') }}">
-                {{ ucfirst($reembolso->status) }}
+        <div class="flex flex-wrap items-center gap-4">
+            <h1 class="text-2xl sm:text-4xl font-bold">Reembolso #{{ $reembolso->id }}</h1>
+            <div class="badge badge-lg {{ $reembolso->status === 'processado' ? 'badge-success' : ($reembolso->status === 'cancelado' ? 'badge-error' : 'badge-warning') }} whitespace-nowrap">
+                <span class="truncate">{{ ucfirst($reembolso->status) }}</span>
             </div>
         </div>
     </div>
@@ -52,23 +52,23 @@
                         </label>
                         <div class="mt-2">
                             @if($reembolso->status === 'pendente')
-                                <div class="badge badge-warning badge-lg gap-2">
-                                    <span class="loading loading-spinner loading-xs"></span>
-                                    Pendente
+                                <div class="badge badge-warning badge-lg gap-2 whitespace-nowrap">
+                                    <span class="loading loading-spinner loading-xs shrink-0"></span>
+                                    <span class="truncate">Pendente</span>
                                 </div>
                             @elseif($reembolso->status === 'processado')
-                                <div class="badge badge-success badge-lg gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="badge badge-success badge-lg gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    Processado
+                                    <span class="truncate">Processado</span>
                                 </div>
                             @else
-                                <div class="badge badge-error badge-lg gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="badge badge-error badge-lg gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
-                                    Cancelado
+                                    <span class="truncate">Cancelado</span>
                                 </div>
                             @endif
                         </div>
@@ -141,8 +141,8 @@
                                 <span class="label-text font-semibold">Método de Reembolso</span>
                             </label>
                             <div class="mt-2">
-                                <div class="badge badge-outline badge-lg">
-                                    {{ ucfirst(str_replace('_', ' ', $reembolso->metodo)) }}
+                                <div class="badge badge-outline badge-lg whitespace-nowrap">
+                                    <span class="truncate max-w-[200px]">{{ ucfirst(str_replace('_', ' ', $reembolso->metodo)) }}</span>
                                 </div>
                             </div>
                         </div>

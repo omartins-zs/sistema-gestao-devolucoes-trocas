@@ -12,10 +12,10 @@
             </svg>
             Voltar para lista
         </a>
-        <div class="flex items-center gap-4">
-            <h1 class="text-4xl font-bold">Devolução #{{ $devolucao->id }}</h1>
-            <div class="badge {{ $devolucao->tipo === 'troca' ? 'badge-primary' : 'badge-ghost' }} badge-lg">
-                {{ $devolucao->tipo === 'troca' ? 'Troca' : 'Devolução' }}
+        <div class="flex flex-wrap items-center gap-4">
+            <h1 class="text-2xl sm:text-4xl font-bold">Devolução #{{ $devolucao->id }}</h1>
+            <div class="badge {{ $devolucao->tipo === 'troca' ? 'badge-primary' : 'badge-ghost' }} badge-lg whitespace-nowrap">
+                <span class="truncate">{{ $devolucao->tipo === 'troca' ? 'Troca' : 'Devolução' }}</span>
             </div>
         </div>
     </div>
@@ -39,30 +39,30 @@
                         </label>
                         <div class="mt-2">
                             @if($devolucao->status === 'pendente')
-                                <div class="badge badge-warning badge-lg gap-2">
-                                    <span class="loading loading-spinner loading-xs"></span>
-                                    Pendente
+                                <div class="badge badge-warning badge-lg gap-2 whitespace-nowrap">
+                                    <span class="loading loading-spinner loading-xs shrink-0"></span>
+                                    <span class="truncate">Pendente</span>
                                 </div>
                             @elseif($devolucao->status === 'aprovada')
-                                <div class="badge badge-success badge-lg gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="badge badge-success badge-lg gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                     </svg>
-                                    Aprovada
+                                    <span class="truncate">Aprovada</span>
                                 </div>
                             @elseif($devolucao->status === 'recusada')
-                                <div class="badge badge-error badge-lg gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="badge badge-error badge-lg gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
-                                    Recusada
+                                    <span class="truncate">Recusada</span>
                                 </div>
                             @else
-                                <div class="badge badge-info badge-lg gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div class="badge badge-info badge-lg gap-2 whitespace-nowrap">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    Concluída
+                                    <span class="truncate">Concluída</span>
                                 </div>
                             @endif
                         </div>

@@ -73,7 +73,7 @@
                             <th>Cliente</th>
                             <th>Devolução</th>
                             <th>Valor</th>
-                            <th>Autorizado</th>
+                            <th class="min-w-[140px]">Autorizado</th>
                             <th>Status</th>
                             <th>Método</th>
                             <th>Data</th>
@@ -100,47 +100,47 @@
                                 </td>
                                 <td>
                                     @if($reembolso->autorizado)
-                                        <div class="badge badge-success gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-success gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                             </svg>
-                                            Autorizado
+                                            <span class="truncate">Autorizado</span>
                                         </div>
                                     @else
-                                        <div class="badge badge-warning gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-warning gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            Não Autorizado
+                                            <span class="truncate">Não Autorizado</span>
                                         </div>
                                     @endif
                                 </td>
                                 <td>
                                     @if($reembolso->status === 'pendente')
-                                        <div class="badge badge-warning gap-2">
-                                            <span class="loading loading-spinner loading-xs"></span>
-                                            Pendente
+                                        <div class="badge badge-warning gap-2 whitespace-nowrap">
+                                            <span class="loading loading-spinner loading-xs shrink-0"></span>
+                                            <span class="truncate">Pendente</span>
                                         </div>
                                     @elseif($reembolso->status === 'processado')
-                                        <div class="badge badge-success gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-success gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            Processado
+                                            <span class="truncate">Processado</span>
                                         </div>
                                     @else
-                                        <div class="badge badge-error gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-error gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
-                                            Cancelado
+                                            <span class="truncate">Cancelado</span>
                                         </div>
                                     @endif
                                 </td>
                                 <td>
                                     @if($reembolso->metodo)
-                                        <div class="badge badge-outline">
-                                            {{ ucfirst(str_replace('_', ' ', $reembolso->metodo)) }}
+                                        <div class="badge badge-outline whitespace-nowrap">
+                                            <span class="truncate max-w-[120px]">{{ ucfirst(str_replace('_', ' ', $reembolso->metodo)) }}</span>
                                         </div>
                                     @else
                                         <span class="text-base-content/50">-</span>

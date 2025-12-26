@@ -65,7 +65,7 @@
                             <th>Cliente</th>
                             <th>Produto</th>
                             <th>Quantidade</th>
-                            <th>Status</th>
+                            <th class="min-w-[120px]">Status</th>
                             <th>Data Solicitação</th>
                             <th class="text-right">Ações</th>
                         </tr>
@@ -75,13 +75,13 @@
                             <tr class="hover">
                                 <td class="font-bold">#{{ $devolucao->id }}</td>
                                 <td>
-                                    <div class="badge {{ $devolucao->tipo === 'troca' ? 'badge-primary gap-2' : 'badge-ghost gap-2' }}">
+                                    <div class="badge {{ $devolucao->tipo === 'troca' ? 'badge-primary gap-2' : 'badge-ghost gap-2' }} whitespace-nowrap">
                                         @if($devolucao->tipo === 'troca')
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                                             </svg>
                                         @endif
-                                        {{ $devolucao->tipo === 'troca' ? 'Troca' : 'Devolução' }}
+                                        <span class="truncate">{{ $devolucao->tipo === 'troca' ? 'Troca' : 'Devolução' }}</span>
                                     </div>
                                 </td>
                                 <td>
@@ -97,30 +97,30 @@
                                 </td>
                                 <td>
                                     @if($devolucao->status === 'pendente')
-                                        <div class="badge badge-warning gap-2">
-                                            <span class="loading loading-spinner loading-xs"></span>
-                                            Pendente
+                                        <div class="badge badge-warning gap-2 whitespace-nowrap">
+                                            <span class="loading loading-spinner loading-xs shrink-0"></span>
+                                            <span class="truncate">Pendente</span>
                                         </div>
                                     @elseif($devolucao->status === 'aprovada')
-                                        <div class="badge badge-success gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-success gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                             </svg>
-                                            Aprovada
+                                            <span class="truncate">Aprovada</span>
                                         </div>
                                     @elseif($devolucao->status === 'recusada')
-                                        <div class="badge badge-error gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-error gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
-                                            Recusada
+                                            <span class="truncate">Recusada</span>
                                         </div>
                                     @else
-                                        <div class="badge badge-info gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <div class="badge badge-info gap-2 whitespace-nowrap">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
-                                            Concluída
+                                            <span class="truncate">Concluída</span>
                                         </div>
                                     @endif
                                 </td>
