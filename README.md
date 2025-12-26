@@ -30,12 +30,18 @@ Este projeto foi desenvolvido como parte de um teste de programação para avali
 ### Principais
 
 - **Cadastro de Entidades**: Clientes, Produtos, Pedidos, Itens de Pedido, Estoque
-- **Gestão de Devoluções**: Criação, listagem e atualização de status
+- **Gestão de Devoluções**: Criação, listagem e atualização de status via API
+- **Gestão de Trocas**: Sistema completo de troca de produtos com validações
 - **Fluxo de Status**: Pendente → Aprovada/Recusada → Concluída
-- **Ajuste Automático de Estoque**: Incremento automático quando devolução é concluída
+- **Ajuste Automático de Estoque**: 
+  - Incremento automático quando devolução é concluída
+  - Decremento automático do produto de troca quando troca é concluída
+- **Reembolsos Automáticos**: Criação automática de reembolso quando devolução é concluída
+- **Pedidos de Troca**: Criação automática de novo pedido quando troca é concluída
+- **Código de Rastreamento**: Geração de código único para rastreamento de envios
 - **Histórico Completo**: Registro de todas as alterações de status com timestamp e responsável
-- **Notificações por E-mail**: Envio assíncrono de e-mails quando status muda
-- **Interface Web**: Painel administrativo para gestão de devoluções
+- **Notificações por E-mail**: Envio assíncrono de e-mails quando status muda (devoluções e reembolsos)
+- **Interface Web**: Painel administrativo para gestão de devoluções e reembolsos
 - **API RESTful**: Endpoints JSON para integração
 
 ## 🛠 Tecnologias Utilizadas
@@ -170,18 +176,44 @@ Após executar os seeders, um usuário administrador é criado:
 
 ### Fluxo de Trabalho
 
-1. **Cliente solicita devolução** via API ou interface
+#### Devolução
+1. **Cliente solicita devolução** via API
 2. **Status inicial**: `pendente`
-3. **Gestor analisa** e aprova/recusa na interface web
+3. **Gestor analisa** e aprova/recusa via API ou interface web
 4. **Status atualizado**: `aprovada` ou `recusada`
 5. **E-mail enviado** automaticamente ao cliente
-6. **Quando concluída**: Estoque é ajustado automaticamente
+6. **Quando concluída**: 
+   - Estoque é incrementado automaticamente
+   - Reembolso é criado automaticamente
+   - E-mail de conclusão enviado ao cliente
+
+#### Troca
+1. **Cliente solicita troca** via API (com `produto_troca_id`)
+2. **Status inicial**: `pendente`
+3. **Gestor analisa** e aprova/recusa via API ou interface web
+4. **Status atualizado**: `aprovada` ou `recusada`
+5. **E-mail enviado** automaticamente ao cliente
+6. **Quando concluída**: 
+   - Estoque do produto devolvido é incrementado
+   - Estoque do produto de troca é decrementado
+   - Novo pedido é criado automaticamente
+   - E-mail de conclusão enviado ao cliente
+
+#### Reembolso
+1. **Reembolso criado automaticamente** quando devolução é concluída
+2. **Status inicial**: `pendente` (não autorizado)
+3. **Gestor autoriza** o reembolso na interface web
+4. **E-mail enviado** ao cliente informando autorização
+5. **Gestor processa** o reembolso escolhendo método de pagamento
+6. **Reembolso finalizado**: Status `processado`
 
 ## 📡 API
 
 ### Endpoints Disponíveis
 
-#### Listar Devoluções
+#### Devoluções
+
+##### Listar Devoluções
 ```http
 GET /api/devolucoes
 ```
@@ -212,6 +244,7 @@ curl -X GET "http://localhost:8000/api/devolucoes?status=pendente"
         "quantidade": 2,
         "motivo": "Produto com defeito",
         "status": "pendente",
+        "tipo": "devolucao",
         "data_solicitacao": "2024-12-26T15:00:00.000000Z",
         "cliente": {
           "id": 1,
@@ -229,17 +262,30 @@ curl -X GET "http://localhost:8000/api/devolucoes?status=pendente"
 }
 ```
 
-#### Criar Devolução
+##### Criar Devolução
 ```http
 POST /api/devolucoes
 ```
 
-**Body**:
+**Body** (Devolução simples):
 ```json
 {
   "pedido_item_id": 1,
   "quantidade": 2,
-  "motivo": "Produto com defeito na tela"
+  "motivo": "Produto com defeito na tela",
+  "tipo": "devolucao"
+}
+```
+
+**Body** (Troca):
+```json
+{
+  "pedido_item_id": 1,
+  "quantidade": 1,
+  "motivo": "Produto não atendeu expectativas",
+  "tipo": "troca",
+  "produto_troca_id": 2,
+  "motivo_troca": "Quero trocar por outro modelo"
 }
 ```
 
@@ -251,7 +297,8 @@ curl -X POST "http://localhost:8000/api/devolucoes" \
   -d '{
     "pedido_item_id": 1,
     "quantidade": 2,
-    "motivo": "Produto com defeito na tela"
+    "motivo": "Produto com defeito na tela",
+    "tipo": "devolucao"
   }'
 ```
 
@@ -268,12 +315,13 @@ curl -X POST "http://localhost:8000/api/devolucoes" \
     "quantidade": 2,
     "motivo": "Produto com defeito na tela",
     "status": "pendente",
+    "tipo": "devolucao",
     "data_solicitacao": "2024-12-26T15:00:00.000000Z"
   }
 }
 ```
 
-#### Visualizar Devolução
+##### Visualizar Devolução
 ```http
 GET /api/devolucoes/{id}
 ```
@@ -283,7 +331,36 @@ GET /api/devolucoes/{id}
 curl -X GET "http://localhost:8000/api/devolucoes/1"
 ```
 
-#### Atualizar Status
+**Resposta**:
+```json
+{
+  "status": "success",
+  "message": "Devolução encontrada",
+  "data": {
+    "id": 1,
+    "cliente_id": 1,
+    "produto_id": 1,
+    "produto_troca_id": null,
+    "quantidade": 2,
+    "motivo": "Produto com defeito",
+    "status": "pendente",
+    "tipo": "devolucao",
+    "data_solicitacao": "2024-12-26T15:00:00.000000Z",
+    "historico": [
+      {
+        "id": 1,
+        "status_old": "pendente",
+        "status_new": "pendente",
+        "data_alteracao": "2024-12-26T15:00:00.000000Z"
+      }
+    ],
+    "cliente": { ... },
+    "produto": { ... }
+  }
+}
+```
+
+##### Atualizar Status de Devolução
 ```http
 PUT /api/devolucoes/{id}
 ```
@@ -308,10 +385,53 @@ curl -X PUT "http://localhost:8000/api/devolucoes/1" \
 ```
 
 **Status válidos**:
-- `pendente`
-- `aprovada`
-- `recusada`
-- `concluida`
+- `pendente` → pode ir para `aprovada` ou `recusada`
+- `aprovada` → pode ir para `concluida`
+- `recusada` → final (não pode mudar)
+- `concluida` → final (não pode mudar)
+
+**Nota**: Quando uma devolução do tipo `devolucao` é concluída, um reembolso é criado automaticamente. Quando uma devolução do tipo `troca` é concluída, um novo pedido é criado automaticamente.
+
+##### Remover Devolução
+```http
+DELETE /api/devolucoes/{id}
+```
+
+**Exemplo**:
+```bash
+curl -X DELETE "http://localhost:8000/api/devolucoes/1"
+```
+
+### Interface Web
+
+Além da API REST, o sistema possui uma interface web administrativa com funcionalidades adicionais:
+
+#### Devoluções (Web)
+
+- **Listar Devoluções**: `GET /devolucoes`
+- **Visualizar Devolução**: `GET /devolucoes/{id}`
+- **Atualizar Status**: `PUT /devolucoes/{id}`
+- **Gerar Código de Rastreamento**: `POST /devolucoes/{id}/gerar-codigo-rastreamento`
+
+#### Reembolsos (Web)
+
+Os reembolsos são criados automaticamente quando uma devolução do tipo `devolucao` é concluída. A gestão de reembolsos está disponível apenas na interface web:
+
+- **Listar Reembolsos**: `GET /reembolsos`
+- **Visualizar Reembolso**: `GET /reembolsos/{id}`
+- **Autorizar Reembolso**: `POST /reembolsos/{id}/autorizar`
+  - Body: `{ "autorizado": true, "observacoes": "..." }`
+- **Processar Reembolso**: `POST /reembolsos/{id}/processar`
+  - Body: `{ "metodo": "credito_original", "observacoes": "..." }`
+
+**Status de Reembolso**:
+- `pendente`: Aguardando autorização
+- `processado`: Reembolso processado e liberado
+
+**Métodos de Reembolso**:
+- `credito_original`: Crédito no método de pagamento original
+- `credito_plataforma`: Crédito na plataforma
+- `transferencia`: Transferência bancária
 
 ## 🧠 Decisões Técnicas
 
